@@ -115,9 +115,8 @@ public class Updater{
                 Log.info("&lcAuto-downloading next version...");
 
                 try{
-                    //download new file from github
                     Fi source = Fi.get(BeControl.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-                    Fi dest = source.sibling("server-release-" + updateBuild + ".jar");
+                    Fi dest = source.sibling("server-release.jar");
 
                     download(updateUrl, dest,
                              len -> Core.app.post(() -> Log.info("&ly| Size: @ MB.", Strings.fixed((float)len / 1024 / 1024, 2))),

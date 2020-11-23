@@ -15,10 +15,10 @@ public class Loader extends Mod{
 
     @Override
     public void init(){
-        buildDirectory = dataDirectory.child("release_builds/"); // for server builds
+        buildDirectory = dataDirectory.child("release_builds/");
 
         if(mobile){
-            Log.warn("AutoUpdater are not support on @ version", "mobile");
+            Log.warn("AutoUpdater are not support on mobile version");
         }else{
             updater = new Updater();
         }
