@@ -22,6 +22,7 @@ import java.io.*;
 import java.net.*;
 
 import static mindustry.Vars.*;
+import static mindustry.core.Version.*;
 import static updater.Loader.*;
 
 public class Updater{
@@ -31,7 +32,7 @@ public class Updater{
     private boolean checkUpdates = true;
     private boolean updateAvailable;
     private String updateUrl;
-    private float updateBuild;
+    private String updateBuild;
 
     public boolean active(){
         return !Version.type.equals("bleeding-edge");
@@ -51,12 +52,12 @@ public class Updater{
         Core.net.httpGet(latestVersionUrl, res -> {
             if(res.getStatus() == Net.HttpStatus.OK){
                 Jval val = Jval.read(res.getResultAsString()).asArray().get(0);
-                float newBuild = Strings.parseFloat(val.getString("tag_name", "0").replace("v", ""));
-                if(newBuild > Version.build){
+                String version = val.getString("tag_name", "0").replace("v", "");
+                if(isUpdateVersion(version)){
                     Jval asset = val.get("assets").asArray().find(v -> v.getString("name", "").startsWith(headless ? "server-release" : "Mindustry"));
                     String url = asset.getString("browser_download_url", "");
                     updateAvailable = true;
-                    updateBuild = newBuild;
+                    updateBuild = version;
                     updateUrl = url;
                     Core.app.post(() -> {
                         showUpdateDialog();
@@ -69,6 +70,18 @@ public class Updater{
                 Core.app.post(() -> done.get(false));
             }
         }, t -> {});
+    }
+
+    private boolean isUpdateVersion(String str){
+        if(build <= 0 || str == null || str.isEmpty()) return true;
+
+        int dot = str.indexOf('.');
+        if(dot != -1){
+            int major = Strings.parseInt(str.substring(0, dot), 0), minor = Strings.parseInt(str.substring(dot + 1), 0);
+            return build > major || (build == major && revision > minor);
+        }else{
+            return build > Strings.parseInt(str, 0);
+        }
     }
 
     private void showUpdateDialog(){
