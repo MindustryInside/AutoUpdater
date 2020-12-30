@@ -26,6 +26,7 @@ public class Loader extends Mod{
 
     @Override
     public void registerServerCommands(CommandHandler handler){
+
         handler.register("upd", "Check updates", args -> {
             updater.checkUpdate(b -> Log.info(b ? "Update found" : "No, Update not found"));
         });
@@ -33,8 +34,11 @@ public class Loader extends Mod{
 
     @Override
     public void registerClientCommands(CommandHandler handler){
-        handler.<Player>register("upd", "Check updates", (args, player)-> {
-            updater.checkUpdate(b -> player.sendMessage(b ? "[accent]Update found" : "[scarlet]No, Update not found"));
-        });
+
+        if(!headless){
+            handler.<Player>register("upd", "Check updates", (args, player) -> {
+                updater.checkUpdate(b -> player.sendMessage(b ? "[accent]Update found" : "[scarlet]No, Update not found"));
+            });
+        }
     }
 }
