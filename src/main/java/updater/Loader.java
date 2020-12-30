@@ -9,8 +9,8 @@ import static mindustry.Vars.*;
 
 public class Loader extends Mod{
     public static final String latestVersionUrl = "https://api.github.com/repos/Anuken/Mindustry/releases";
-    public static Fi buildDirectory;
 
+    public static Fi buildDirectory;
     public static Updater updater;
 
     @Override

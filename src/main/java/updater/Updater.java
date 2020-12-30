@@ -8,7 +8,8 @@ import arc.util.*;
 import arc.util.async.*;
 import arc.util.serialization.Jval;
 import mindustry.Vars;
-import mindustry.core.Version;
+import mindustry.core.*;
+import mindustry.core.GameState.State;
 import mindustry.gen.Icon;
 import mindustry.graphics.Pal;
 import mindustry.io.SaveIO;
@@ -38,7 +39,7 @@ public class Updater{
     public Updater(){
         if(active()){
             Timer.schedule(() -> {
-                if(checkUpdates){
+                if(checkUpdates && state.is(State.menu)){
                     checkUpdate(t -> {});
                 }
             }, updateInterval, updateInterval);
@@ -89,7 +90,7 @@ public class Updater{
                                     new String[]{"java", "-XstartOnFirstThread", "-DlastBuild=" + Version.build, "-Dberestart", "-Dbecopy=" + fileDest.absolutePath(), "-jar", file.absolutePath()} :
                                     new String[]{"java", "-DlastBuild=" + Version.build, "-Dberestart", "-Dbecopy=" + fileDest.absolutePath(), "-jar", file.absolutePath()}
                             );
-                            System.exit(0);
+                            System.exit(2);
                         }catch(IOException e){
                             ui.showException(e);
                         }
@@ -162,7 +163,11 @@ public class Updater{
                 }
                 out.close();
                 in.close();
-                if(!canceled.get()) done.run();
+                if(!canceled.get()){
+                    done.run();
+                }else{
+                    dest.delete();
+                }
             }catch(Throwable e){
                 error.get(e);
             }
