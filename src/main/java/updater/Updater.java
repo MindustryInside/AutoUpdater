@@ -8,12 +8,13 @@ import arc.util.*;
 import arc.util.async.*;
 import arc.util.serialization.Jval;
 import mindustry.Vars;
-import mindustry.core.*;
 import mindustry.core.GameState.State;
+import mindustry.core.Version;
 import mindustry.gen.Icon;
 import mindustry.graphics.Pal;
 import mindustry.io.SaveIO;
 import mindustry.net.*;
+import mindustry.net.Packets.KickReason;
 import mindustry.ui.Bar;
 import mindustry.ui.dialogs.BaseDialog;
 
@@ -70,12 +71,12 @@ public class Updater{
         }, t -> {});
     }
 
-    public void showUpdateDialog(){
+    private void showUpdateDialog(){
         if(!updateAvailable) return;
 
         if(!headless){
             checkUpdates = false;
-            ui.showCustomConfirm(Core.bundle.format("auto-updater.update", "") + " " + updateBuild, "@auto-updater.confirm", "@ok", "@auto-updater.ignore", () -> {
+            ui.showCustomConfirm(Core.bundle.get("auto-updater.update") + " " + updateBuild, "@auto-updater.confirm", "@ok", "@auto-updater.ignore", () -> {
                 try{
                     boolean[] cancel = {false};
                     float[] progress = {0};
@@ -90,7 +91,7 @@ public class Updater{
                                     new String[]{"java", "-XstartOnFirstThread", "-DlastBuild=" + Version.build, "-Dberestart", "-Dbecopy=" + fileDest.absolutePath(), "-jar", file.absolutePath()} :
                                     new String[]{"java", "-DlastBuild=" + Version.build, "-Dberestart", "-Dbecopy=" + fileDest.absolutePath(), "-jar", file.absolutePath()}
                             );
-                            System.exit(2);
+                            Core.app.exit();
                         }catch(IOException e){
                             ui.showException(e);
                         }
@@ -128,7 +129,7 @@ public class Updater{
                                  SaveIO.save(saveDirectory.child("autosavebe." + saveExtension));
                                  Log.info("&lcAutosaved.");
 
-                                 netServer.kickAll(Packets.KickReason.serverRestarting);
+                                 netServer.kickAll(KickReason.serverRestarting);
                                  Threads.sleep(32);
 
                                  Log.info("&lcVersion downloaded, exiting. Note that if you are not using a auto-restart script, the server will not restart automatically.");

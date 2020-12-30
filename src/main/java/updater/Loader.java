@@ -18,7 +18,7 @@ public class Loader extends Mod{
         buildDirectory = dataDirectory.child("release_builds/");
 
         if(mobile){
-            Log.warn("AutoUpdater are not support on mobile version");
+            Log.warn("AutoUpdater aren't support on mobile version");
         }else{
             updater = new Updater();
         }
