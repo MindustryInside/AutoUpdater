@@ -78,9 +78,9 @@ public class Updater{
         int dot = str.indexOf('.');
         if(dot != -1){
             int major = Strings.parseInt(str.substring(0, dot), 0), minor = Strings.parseInt(str.substring(dot + 1), 0);
-            return build > major || (build == major && revision > minor);
+            return major > build || (major == build && minor > revision);
         }else{
-            return build > Strings.parseInt(str, 0);
+            return Strings.parseInt(str, 0) > build;
         }
     }
 
