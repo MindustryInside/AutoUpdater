@@ -1,5 +1,5 @@
 # AutoUpdater
-A small jar-mod for auto updating Mindustry. <br>
+A small jar-mod for an auto updating Mindustry. <br>
 *Works on mobile, desktop and server platforms!*
 
 ## Installation
@@ -10,8 +10,11 @@ Put `.jar` to one of these paths:
 * Server: `config/mods`
 
 ## Building
-* Windows: `gradlew deploy`
-* Linux: `./gradlew deploy`
-After building, the `.jar` file should be located in build/libs/InsideBot.jar folder.
+* Windows: `gradlew jar`
+* Linux/Mac OS: `./gradlew jar`
+* Android: `gradlew androidJar` / `./gradlew androidJar`
+* Composite: `gradlew deploy` / `./gradlew deploy`
+
+After building, the `.jar` file should be located in `build/libs` folder.
 
 If the terminal returns Permission denied or Command not found, run `chmod +x ./gradlew`.
