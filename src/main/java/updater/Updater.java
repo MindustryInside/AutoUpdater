@@ -130,7 +130,7 @@ public class Updater{
                 Log.info("&lcAuto-downloading next version...");
 
                 try{
-                    Fi source = Fi.get(BeControl.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                    Fi source = Fi.get(Vars.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
                     Fi dest = source.sibling("server-release.jar");
 
                     download(updateUrl, dest,
@@ -138,9 +138,11 @@ public class Updater{
                              progress -> {},
                              () -> false,
                              () -> Core.app.post(() -> {
-                                 Log.info("&lcSaving...");
-                                 SaveIO.save(saveDirectory.child("autosavebe." + saveExtension));
-                                 Log.info("&lcAutosaved.");
+                                 if(!state.isMenu()){
+                                     Log.info("&lcSaving...");
+                                     SaveIO.save(saveDirectory.child("autosave." + saveExtension));
+                                     Log.info("&lcAutosaved.");
+                                 }
 
                                  netServer.kickAll(KickReason.serverRestarting);
                                  Threads.sleep(32);
@@ -153,6 +155,8 @@ public class Updater{
                 }catch(Throwable e){
                     Log.err(e);
                 }
+            }else{
+                Log.info("&lcDo &lcconfig autoUpdate true&lc to enable auto-update.");
             }
             checkUpdates = false;
         }
