@@ -1,9 +1,14 @@
 package updater;
 
+import arc.Events;
 import arc.files.Fi;
 import arc.util.*;
+import mindustry.core.GameState;
+import mindustry.game.EventType;
 import mindustry.gen.Player;
+import mindustry.io.SaveIO;
 import mindustry.mod.Mod;
+import mindustry.net.Administration;
 
 import static mindustry.Vars.*;
 
@@ -18,6 +23,22 @@ public class Loader extends Mod{
         buildDirectory = dataDirectory.child("release_builds/");
 
         updater = new Updater();
+
+        Events.on(EventType.ClientLoadEvent.class, event -> {
+            if(Administration.Config.autoUpdate.bool() && updater.active()){
+                Fi fi = saveDirectory.child("autosave.msav");
+                if(fi.exists()){
+                    try{
+                        SaveIO.load(fi);
+                        Log.info("Auto-save loaded.");
+                        state.set(GameState.State.playing);
+                        netServer.openServer();
+                    }catch(Throwable e){
+                        Log.err(e);
+                    }
+                }
+            }
+        });
     }
 
     @Override
