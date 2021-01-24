@@ -1,6 +1,5 @@
 package updater;
 
-import arc.Net;
 import arc.*;
 import arc.files.Fi;
 import arc.func.*;
@@ -8,12 +7,11 @@ import arc.util.*;
 import arc.util.async.*;
 import arc.util.serialization.Jval;
 import mindustry.Vars;
-import mindustry.core.GameState.State;
 import mindustry.core.Version;
 import mindustry.gen.Icon;
 import mindustry.graphics.Pal;
 import mindustry.io.SaveIO;
-import mindustry.net.*;
+import mindustry.net.Administration;
 import mindustry.net.Packets.KickReason;
 import mindustry.ui.Bar;
 import mindustry.ui.dialogs.BaseDialog;
@@ -41,7 +39,7 @@ public class Updater{
     public Updater(){
         if(active()){
             Timer.schedule(() -> {
-                if(checkUpdates && state.is(State.menu)){
+                if(checkUpdates && (headless || state.isMenu())){
                     checkUpdate(t -> {});
                 }
             }, updateInterval, updateInterval);
