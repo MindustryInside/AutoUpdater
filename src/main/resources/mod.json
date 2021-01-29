@@ -2,7 +2,7 @@
   "name": "auto-updater",
   "displayName": "[royal]AutoUpdater",
   "description": "Mindustry auto updater",
-  "author": "[#c1f9b6]Mindustry Inside",
+  "author": "Mindustry Inside",
   "main": "updater.Loader",
   "hidden": true,
   "version": "0.4-alpha",
