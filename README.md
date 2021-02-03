@@ -1,6 +1,6 @@
 # AutoUpdater
 A small jar-mod for an auto updating Mindustry. <br>
-*Works on mobile, desktop and server platforms!*
+*Works on desktop and server platforms!*
 
 ## Installation
 Download the latest release (`.jar`) [here](https://github.com/MindustryInside/AutoUpdater/releases/latest). <br>
@@ -18,3 +18,6 @@ Put `.jar` to one of these paths:
 After building, the `.jar` file should be located in `build/libs` folder.
 
 If the terminal returns Permission denied or Command not found, run `chmod +x ./gradlew`.
+
+## Extension
+At the moment and most likely will never be implemented for the **Android** platform due to its restrictions
