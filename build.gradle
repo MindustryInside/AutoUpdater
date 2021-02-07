@@ -48,6 +48,14 @@ jar{
     archiveFileName = "${project.archivesBaseName}Desktop.jar"
 
     from{configurations.runtimeClasspath.collect{it.isDirectory() ? it : zipTree(it)}}
+
+    from(rootDir){
+        include "mod.json"
+    }
+
+    from("assets/"){
+        include "**"
+    }
 }
 
 task deploy(type: Jar){

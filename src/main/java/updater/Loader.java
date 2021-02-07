@@ -33,8 +33,8 @@ public class Loader extends Mod{
                         Log.info("Auto-save loaded.");
                         state.set(GameState.State.playing);
                         netServer.openServer();
-                    }catch(Throwable e){
-                        Log.err(e);
+                    }catch(Throwable t){
+                        Log.err(t);
                     }
                 }
             }
