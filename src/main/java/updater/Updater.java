@@ -99,8 +99,8 @@ public class Updater{
                     download(updateUrl, file, i -> length[0] = i, v -> progress[0] = v, () -> cancel[0], () -> {
                         try{
                             Runtime.getRuntime().exec(OS.isMac ?
-                                    new String[]{"java", "-XstartOnFirstThread", "-DlastBuild=" + Version.build, "-Dberestart", "-Dbecopy=" + fileDest.absolutePath(), "-jar", file.absolutePath()} :
-                                    new String[]{"java", "-DlastBuild=" + Version.build, "-Dberestart", "-Dbecopy=" + fileDest.absolutePath(), "-jar", file.absolutePath()}
+                                    new String[]{"java", "-XstartOnFirstThread", "-DlastBuild=" + Version.build, "-jar", file.absolutePath()} :
+                                    new String[]{"java", "-DlastBuild=" + Version.build, "-jar", file.absolutePath()}
                             );
                             Core.app.exit();
                         }catch(IOException e){

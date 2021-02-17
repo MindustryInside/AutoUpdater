@@ -9,6 +9,10 @@ Put `.jar` to one of these paths:
 * Linux: `~/.local/share/Mindustry/mods` 
 * Server: `config/mods`
 
+If you use for a server, you can also start the server automatically, use [this script](assets/run-jar.sh).
+* `chmod +x run-jar.sh`
+* `./run-jar.sh <server-filename>.jar`
+
 ## Building
 * Windows: `gradlew jar`
 * Linux/Mac OS: `./gradlew jar`
