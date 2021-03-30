@@ -5,6 +5,6 @@
   "author": "Mindustry Inside",
   "main": "updater.Loader",
   "hidden": true,
-  "version": "0.6",
+  "version": "0.7",
   "minGameVersion": 120
 }
