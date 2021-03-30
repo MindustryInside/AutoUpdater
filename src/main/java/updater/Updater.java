@@ -46,6 +46,10 @@ public class Updater{
         }
     }
 
+    public boolean isUpdateAvailable(){
+        return updateAvailable;
+    }
+
     public void checkUpdate(Boolc done){
         Core.net.httpGet(latestVersionUrl, res -> {
             if(res.getStatus() == Net.HttpStatus.OK){
