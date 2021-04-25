@@ -27,7 +27,7 @@ ext{
     dexPath = "$libs/${artifactBaseName}-android.jar"
 
     versions = [:]
-    versions.mindustry = 'v' + mod.minGameVersion
+    versions.mindustry = '126.2'
     versions.jabel = '0.3.0'
 }
 
