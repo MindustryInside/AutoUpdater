@@ -6,6 +6,6 @@
   "main": "inside.updater.Loader",
   "hidden": true,
   "java": true,
-  "version": "0.7",
+  "version": "0.8",
   "minGameVersion": 120
 }
