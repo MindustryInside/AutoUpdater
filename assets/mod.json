@@ -3,8 +3,9 @@
   "displayName": "[royal]AutoUpdater",
   "description": "Mindustry auto updater",
   "author": "Mindustry Inside",
-  "main": "updater.Loader",
+  "main": "inside.updater.Loader",
   "hidden": true,
+  "java": true,
   "version": "0.7",
   "minGameVersion": 120
 }

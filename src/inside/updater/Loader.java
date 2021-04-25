@@ -1,14 +1,13 @@
-package updater;
+package inside.updater;
 
 import arc.Events;
 import arc.files.Fi;
 import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.util.*;
-import mindustry.Vars;
-import mindustry.core.*;
+import mindustry.core.GameState;
 import mindustry.game.EventType;
-import mindustry.gen.*;
+import mindustry.gen.Icon;
 import mindustry.graphics.Pal;
 import mindustry.io.SaveIO;
 import mindustry.mod.Mod;
@@ -47,7 +46,7 @@ public class Loader extends Mod{
             }
         });
 
-        if(updater.active()){
+        if(updater.active() && !headless){
             ui.menuGroup.fill(c -> c.bottom().right().button("@auto-updater.check", Icon.refresh, () -> {
                 ui.loadfrag.show();
                 updater.checkUpdate(result -> {
@@ -66,17 +65,7 @@ public class Loader extends Mod{
     public void registerServerCommands(CommandHandler handler){
 
         handler.register("upd", "Check updates", args -> {
-            updater.checkUpdate(b -> Log.info(b ? "Update found" : "No, Update not found"));
+            updater.checkUpdate(b -> Log.info(b ? "" : "No, Update not found"));
         });
-    }
-
-    @Override
-    public void registerClientCommands(CommandHandler handler){
-
-        if(!headless){
-            handler.<Player>register("upd", "Check updates", (args, player) -> {
-                updater.checkUpdate(b -> player.sendMessage(b ? "[accent]Update found" : "[scarlet]No, Update not found"));
-            });
-        }
     }
 }

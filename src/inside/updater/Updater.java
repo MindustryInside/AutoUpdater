@@ -1,4 +1,4 @@
-package updater;
+package inside.updater;
 
 import arc.*;
 import arc.files.Fi;
@@ -21,7 +21,7 @@ import java.net.*;
 
 import static mindustry.Vars.*;
 import static mindustry.core.Version.*;
-import static updater.Loader.*;
+import static inside.updater.Loader.*;
 
 public class Updater{
     private static final int updateInterval = 60;
@@ -159,7 +159,7 @@ public class Updater{
                     Log.err(e);
                 }
             }else{
-                Log.info("&lcDo &lcconfig autoUpdate true&lc to enable auto-update.");
+                Log.info("&lcDo @&lc to enable auto-update.", "config autoUpdate true");
             }
             checkUpdates = false;
         }

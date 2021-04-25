@@ -1,4 +1,14 @@
-apply plugin: "java"
+import groovy.json.JsonSlurper
+
+apply plugin: 'java'
+
+sourceCompatibility = 14
+targetCompatibility = 1.8
+
+sourceSets.main{
+    java.srcDirs = ['src']
+    resources.srcDirs = ['assets']
+}
 
 repositories{
     mavenCentral()
@@ -6,67 +16,66 @@ repositories{
 }
 
 ext{
-    mindustryVersion = 'v126.2'
-    sdkVersion = '30'
-    sdkRoot = System.getenv("ANDROID_HOME")
+    def json = new JsonSlurper()
+    def libs = "$rootDir/build/libs"
+    def modFile = file("${sourceSets.main.resources.srcDirs.last()}/mod.json")
+    def mod = json.parseText(modFile.text)
 
-    doExec = {cmd ->
-        def proc = cmd.execute(null, new File("$buildDir/libs"))
-        proc.waitForProcessOutput(System.out, System.err)
-    }
+    artifactBaseName = mod.name + (!mod.version.isEmpty() ? "-$mod.version" : "")
+
+    jarPath = "$libs/${artifactBaseName}-desktop.jar"
+    dexPath = "$libs/${artifactBaseName}-android.jar"
+
+    versions = [:]
+    versions.mindustry = 'v' + mod.minGameVersion
+    versions.jabel = '0.3.0'
 }
 
 dependencies{
-    compileOnly "com.github.Anuken.Arc:arc-core:$mindustryVersion"
-    compileOnly "com.github.Anuken.Mindustry:core:$mindustryVersion"
+    compileOnly "com.github.Anuken.Arc:arc-core:$versions.mindustry"
+    compileOnly "com.github.Anuken.Mindustry:core:$versions.mindustry"
+
+    annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:$versions.jabel"
 }
 
-allprojects{
-    tasks.withType(JavaCompile){
-        if(JavaVersion.current() != JavaVersion.VERSION_1_8){
-            options.compilerArgs.addAll(['--release', '8'])
-        }
+task desktop(type: Jar){
+    archiveBaseName.set "$artifactBaseName-desktop"
+
+    from{
+        configurations.runtimeClasspath.collect{it.isDirectory() ? it : zipTree(it)}
+    }
+
+    with jar
+}
+
+task android(type: Exec, dependsOn: desktop){
+    def command = [
+            'd8', jarPath,
+            '--min-api', '28',
+            '--output', dexPath
+    ]
+
+    if(System.getProperty('os.name').toLowerCase().contains('windows')){
+        commandLine("cmd", "/c", *command)
+    }else{
+        commandLine(*command)
     }
 }
 
-task jarAndroid{
-    dependsOn "jar"
+task dist(type: Jar, dependsOn: android){
+    archiveBaseName.set artifactBaseName
 
-    doLast{
-        def files = (configurations.compileClasspath.asList() + configurations.runtimeClasspath.asList() + [new File("$sdkRoot/platforms/android-$sdkVersion/android.jar")])
-        def dependencies = files.collect{"--classpath $it.path"}.join(" ")
-
-        if(System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')){
-            doExec("cmd.exe /c d8 $dependencies --min-api 14 --output ${project.archivesBaseName}Android.jar ${project.archivesBaseName}Desktop.jar")
-        }else{
-            doExec("d8 $dependencies --min-api 14 --output ${project.archivesBaseName}Android.jar ${project.archivesBaseName}Desktop.jar")
-        }
-    }
+    from zipTree(jarPath), zipTree(dexPath)
 }
 
-jar{
-    archiveFileName = "${project.archivesBaseName}Desktop.jar"
-
-    from{configurations.runtimeClasspath.collect{it.isDirectory() ? it : zipTree(it)}}
-
-    from(rootDir){
-        include "mod.json"
+tasks.withType(JavaCompile){
+    if(JavaVersion.current() != JavaVersion.VERSION_1_8){
+        options.compilerArgs = ['--release', '8', '--enable-preview']
     }
 
-    from("assets/"){
-        include "**"
-    }
-}
+    options.compilerArgs << '-Xplugin:jabel'
 
-task deploy(type: Jar){
-    dependsOn jarAndroid
-    dependsOn jar
-    archiveFileName = "${project.archivesBaseName}.jar"
-
-    from{[zipTree("$buildDir/libs/${project.archivesBaseName}Desktop.jar"), zipTree("$buildDir/libs/${project.archivesBaseName}Android.jar")]}
-
-    doLast{
-        delete{delete "$buildDir/libs/${project.archivesBaseName}Desktop.jar"}
-        delete{delete "$buildDir/libs/${project.archivesBaseName}Android.jar"}
+    doFirst{
+        options.compilerArgs = options.compilerArgs.findAll{it != '--enable-preview'}
     }
 }
