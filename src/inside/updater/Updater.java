@@ -54,9 +54,10 @@ public class Updater{
         Core.net.httpGet(latestVersionUrl, res -> {
             if(res.getStatus() == Net.HttpStatus.OK){
                 Jval val = Jval.read(res.getResultAsString()).asArray().get(0);
-                String version = val.getString("tag_name", "0").replace("v", "");
+                String version = val.getString("tag_name", "0").substring(1);
                 if(isUpdateVersion(version)){
-                    Jval asset = val.get("assets").asArray().find(v -> v.getString("name", "").startsWith(headless ? "server-release" : "Mindustry"));
+                    Jval asset = val.get("assets").asArray().find(v -> v.getString("name", "")
+                            .startsWith(headless ? "server-release" : "Mindustry"));
                     String url = asset.getString("browser_download_url", "");
                     updateAvailable = true;
                     updateBuild = version;
@@ -79,7 +80,8 @@ public class Updater{
 
         int dot = str.indexOf('.');
         if(dot != -1){
-            int major = Strings.parseInt(str.substring(0, dot), 0), minor = Strings.parseInt(str.substring(dot + 1), 0);
+            int major = Strings.parseInt(str.substring(0, dot), 0);
+            int minor = Strings.parseInt(str.substring(dot + 1), 0);
             return major > build || (major == build && minor > revision);
         }else{
             return Strings.parseInt(str, 0) > build;

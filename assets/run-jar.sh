@@ -14,6 +14,6 @@ while true; do
 java -jar -XX:+HeapDumpOnOutOfMemoryError $1
 excode=$?
 if [ $excode -eq 0 ] || [ $excode -eq 130 ]; then
-  exit 0
+    exit 0
 fi
 done
