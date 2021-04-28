@@ -63,9 +63,8 @@ public class Loader extends Mod{
 
     @Override
     public void registerServerCommands(CommandHandler handler){
-
         handler.register("upd", "Check updates", args -> {
-            updater.checkUpdate(b -> Log.info(b ? "" : "No, Update not found"));
+            updater.checkUpdate(b -> Log.info(b ? "" : "Update not found"));
         });
     }
 }
