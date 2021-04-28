@@ -2,7 +2,7 @@
   "name": "auto-updater",
   "displayName": "[royal]AutoUpdater",
   "description": "Mindustry auto updater",
-  "author": "Mindustry Inside",
+  "author": "Skat",
   "main": "inside.updater.Loader",
   "hidden": true,
   "java": true,
