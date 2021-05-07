@@ -28,14 +28,14 @@ ext{
 
     versions = [:]
     versions.mindustry = '126.2'
-    versions.jabel = '0.3.0'
+    versions.jabel = '0.3.1'
 }
 
 dependencies{
     compileOnly "com.github.Anuken.Arc:arc-core:$versions.mindustry"
     compileOnly "com.github.Anuken.Mindustry:core:$versions.mindustry"
 
-    annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:$versions.jabel"
+    annotationProcessor "com.github.MindustryInside:jabel:$versions.jabel"
 }
 
 task desktop(type: Jar){
