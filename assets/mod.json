@@ -7,5 +7,6 @@
   "hidden": true,
   "java": true,
   "version": "0.8",
-  "minGameVersion": 120
+  "minGameVersion": 120,
+  "repo": "MindustryInside/AutoUpdater"
 }
