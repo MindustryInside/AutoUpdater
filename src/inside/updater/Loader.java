@@ -31,7 +31,8 @@ public class Loader extends Mod{
         updater = new Updater();
 
         Events.on(EventType.ClientLoadEvent.class, event -> {
-            if(Administration.Config.autoUpdate.bool() && updater.active()){
+            // backward support
+            if(updater.active() && (Setting.enable.bool() || Administration.Config.autoUpdate.bool())){
                 Fi fi = saveDirectory.child("autosave.msav");
                 if(fi.exists()){
                     try{
