@@ -11,7 +11,7 @@ import mindustry.Vars;
 import mindustry.gen.Icon;
 import mindustry.graphics.Pal;
 import mindustry.io.SaveIO;
-import mindustry.net.Administration;
+import mindustry.net.*;
 import mindustry.net.Packets.KickReason;
 import mindustry.ui.Bar;
 import mindustry.ui.dialogs.BaseDialog;
@@ -51,8 +51,8 @@ public class Updater{
     }
 
     public void checkUpdate(Boolc done){
-        Core.net.httpGet(releasesUrl, res -> {
-            if(res.getStatus() == Net.HttpStatus.OK){
+        Http.get(releasesUrl, res -> {
+            if(res.getStatus() == Http.HttpStatus.OK){
                 Jval val = Jval.read(res.getResultAsString()).asArray().get(0);
                 String version = val.getString("tag_name", "0").substring(1);
                 if(isUpdateVersion(version) && (!val.getBool("prerelease", false)
@@ -176,9 +176,9 @@ public class Updater{
             try{
                 HttpURLConnection con = (HttpURLConnection)new URL(furl).openConnection();
                 BufferedInputStream in = new BufferedInputStream(con.getInputStream());
-                OutputStream out = dest.write(false, Streams.DEFAULT_BUFFER_SIZE);
+                OutputStream out = dest.write(false, Streams.defaultBufferSize);
 
-                byte[] data = new byte[Streams.DEFAULT_BUFFER_SIZE];
+                byte[] data = new byte[Streams.defaultBufferSize];
                 long size = con.getContentLength();
                 long counter = 0;
                 length.get((int)size);

@@ -23,7 +23,7 @@ ext{
     artifactBaseName = mod.name + (!mod.version.isEmpty() ? "-$mod.version" : "")
 
     versions = [:]
-    versions.mindustry = '126.2'
+    versions.mindustry = '128'
     versions.jabel = '0.4.1'
 }
 
