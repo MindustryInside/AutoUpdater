@@ -5,9 +5,9 @@ import arc.files.Fi;
 import arc.func.*;
 import arc.util.*;
 import arc.util.async.*;
+import arc.util.io.Streams;
 import arc.util.serialization.Jval;
 import mindustry.Vars;
-import mindustry.core.Version;
 import mindustry.gen.Icon;
 import mindustry.graphics.Pal;
 import mindustry.io.SaveIO;
@@ -19,12 +19,12 @@ import mindustry.ui.dialogs.BaseDialog;
 import java.io.*;
 import java.net.*;
 
+import static inside.updater.Loader.*;
 import static mindustry.Vars.*;
 import static mindustry.core.Version.*;
-import static inside.updater.Loader.*;
 
 public class Updater{
-    private static final int updateInterval = 60;
+    private static final int updateInterval = 60; // seconds
 
     private final AsyncExecutor executor = new AsyncExecutor(1);
     private boolean checkUpdates = true;
@@ -33,14 +33,15 @@ public class Updater{
     private String updateBuild;
 
     public boolean active(){
-        return !Version.type.equals("bleeding-edge");
+        return !type.equals("bleeding-edge");
     }
 
     public Updater(){
         if(active()){
             Timer.schedule(() -> {
                 if(checkUpdates && (headless || state.isMenu())){
-                    checkUpdate(t -> {});
+                    // needed how update state, because button color in the main menu is based on this state
+                    checkUpdate(t -> updateAvailable = t);
                 }
             }, updateInterval, updateInterval);
         }
@@ -51,11 +52,13 @@ public class Updater{
     }
 
     public void checkUpdate(Boolc done){
-        Core.net.httpGet(latestVersionUrl, res -> {
+        Core.net.httpGet(releasesUrl, res -> {
             if(res.getStatus() == Net.HttpStatus.OK){
                 Jval val = Jval.read(res.getResultAsString()).asArray().get(0);
                 String version = val.getString("tag_name", "0").substring(1);
-                if(isUpdateVersion(version)){
+                if(isUpdateVersion(version) && (!val.getBool("prerelease", false)
+                        || Core.settings.getBool("auto-updater.unstable"))){
+
                     Jval asset = val.get("assets").asArray().find(v -> v.getString("name", "")
                             .startsWith(headless ? "server-release" : "Mindustry"));
                     String url = asset.getString("browser_download_url", "");
@@ -83,9 +86,8 @@ public class Updater{
             int major = Strings.parseInt(str.substring(0, dot), 0);
             int minor = Strings.parseInt(str.substring(dot + 1), 0);
             return major > build || (major == build && minor > revision);
-        }else{
-            return Strings.parseInt(str, 0) > build;
         }
+        return Strings.parseInt(str, 0) > build;
     }
 
     private void showUpdateDialog(){
@@ -105,8 +107,8 @@ public class Updater{
                     download(updateUrl, file, i -> length[0] = i, v -> progress[0] = v, () -> cancel[0], () -> {
                         try{
                             Runtime.getRuntime().exec(OS.isMac ?
-                                    new String[]{"java", "-XstartOnFirstThread", "-DlastBuild=" + Version.build, "-jar", file.absolutePath()} :
-                                    new String[]{"java", "-DlastBuild=" + Version.build, "-jar", file.absolutePath()}
+                                    new String[]{"java", "-XstartOnFirstThread", "-DlastBuild=" + build, "-jar", file.absolutePath()} :
+                                    new String[]{"java", "-DlastBuild=" + build, "-jar", file.absolutePath()}
                             );
                             file.copyTo(fileDest);
                             Core.app.exit();
@@ -118,7 +120,10 @@ public class Updater{
                         ui.showException(e);
                     });
 
-                    dialog.cont.add(new Bar(() -> length[0] == 0 ? Core.bundle.get("auto-updater.updating") : (int)(progress[0] * length[0]) / 1024 / 1024 + "/" + length[0] / 1024 / 1024 + " MB", () -> Pal.accent, () -> progress[0])).width(400f).height(70f);
+                    dialog.cont.add(new Bar(() -> length[0] == 0 ? Core.bundle.get("auto-updater.updating")
+                            : (int)(progress[0] * length[0]) / 1024 / 1024 + "/" + length[0] / 1024 / 1024
+                            + " MB", () -> Pal.accent, () -> progress[0])).width(400f).height(70f);
+
                     dialog.buttons.button("@cancel", Icon.cancel, () -> {
                         cancel[0] = true;
                         dialog.hide();
@@ -131,7 +136,7 @@ public class Updater{
             }, () -> checkUpdates = false);
         }else{
             Log.info("&lcA new update is available: &lybuild @", updateBuild);
-            if(Administration.Config.autoUpdate.bool()){
+            if(Administration.Config.autoUpdate.bool() || Setting.enable.bool()){
                 Log.info("&lcAuto-downloading next version...");
 
                 try{
@@ -161,7 +166,7 @@ public class Updater{
                     Log.err(e);
                 }
             }else{
-                Log.info("&lcDo @&lc to enable auto-update.", "config autoUpdate true");
+                Log.info("&lcDo @&lc to enable auto-update.", "updater enable true");
             }
             checkUpdates = false;
         }
@@ -172,9 +177,9 @@ public class Updater{
             try{
                 HttpURLConnection con = (HttpURLConnection)new URL(furl).openConnection();
                 BufferedInputStream in = new BufferedInputStream(con.getInputStream());
-                OutputStream out = dest.write(false, 4096);
+                OutputStream out = dest.write(false, Streams.DEFAULT_BUFFER_SIZE);
 
-                byte[] data = new byte[4096];
+                byte[] data = new byte[Streams.DEFAULT_BUFFER_SIZE];
                 long size = con.getContentLength();
                 long counter = 0;
                 length.get((int)size);

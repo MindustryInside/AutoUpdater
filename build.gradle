@@ -28,7 +28,7 @@ ext{
 
     versions = [:]
     versions.mindustry = '126.2'
-    versions.jabel = '0.3.1'
+    versions.jabel = '0.4.1'
 }
 
 dependencies{
@@ -49,11 +49,7 @@ task desktop(type: Jar){
 }
 
 task android(type: Exec, dependsOn: desktop){
-    def command = [
-            'd8', jarPath,
-            '--min-api', '28',
-            '--output', dexPath
-    ]
+    def command = ['d8', jarPath, '--min-api', '28', '--output', dexPath]
 
     if(System.getProperty('os.name').toLowerCase().contains('windows')){
         commandLine("cmd", "/c", *command)
