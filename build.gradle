@@ -17,14 +17,10 @@ repositories{
 
 ext{
     def json = new JsonSlurper()
-    def libs = "$rootDir/build/libs"
     def modFile = file("${sourceSets.main.resources.srcDirs.last()}/mod.json")
     def mod = json.parseText(modFile.text)
 
     artifactBaseName = mod.name + (!mod.version.isEmpty() ? "-$mod.version" : "")
-
-    jarPath = "$libs/${artifactBaseName}-desktop.jar"
-    dexPath = "$libs/${artifactBaseName}-android.jar"
 
     versions = [:]
     versions.mindustry = '126.2'
@@ -38,30 +34,14 @@ dependencies{
     annotationProcessor "com.github.MindustryInside:jabel:$versions.jabel"
 }
 
-task desktop(type: Jar){
-    archiveBaseName.set "$artifactBaseName-desktop"
+task dist(type: Jar){
+    archiveBaseName.set artifactBaseName
 
     from{
         configurations.runtimeClasspath.collect{it.isDirectory() ? it : zipTree(it)}
     }
 
     with jar
-}
-
-task android(type: Exec, dependsOn: desktop){
-    def command = ['d8', jarPath, '--min-api', '28', '--output', dexPath]
-
-    if(System.getProperty('os.name').toLowerCase().contains('windows')){
-        commandLine("cmd", "/c", *command)
-    }else{
-        commandLine(*command)
-    }
-}
-
-task dist(type: Jar, dependsOn: android){
-    archiveBaseName.set artifactBaseName
-
-    from zipTree(jarPath), zipTree(dexPath)
 }
 
 tasks.withType(JavaCompile){

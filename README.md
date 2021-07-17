@@ -17,8 +17,8 @@ If you use for a server, you can also start the server automatically, use [this 
 
 ## Building
 
-* Windows: `gradlew desktop`
-* *nix/Mac OS: `./gradlew desktop`
+* Windows: `gradlew dist`
+* *nix/Mac OS: `./gradlew dist`
 
 After building, the `.jar` file should be located in `build/libs` folder.
 

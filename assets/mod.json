@@ -6,7 +6,7 @@
   "main": "inside.updater.Loader",
   "hidden": true,
   "java": true,
-  "version": "0.8",
+  "version": "0.9",
   "minGameVersion": 120,
   "repo": "MindustryInside/AutoUpdater"
 }
