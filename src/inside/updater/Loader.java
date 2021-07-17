@@ -47,7 +47,10 @@ public class Loader extends Mod{
         });
 
         if(updater.active() && !headless){
-            ui.settings.game.checkPref("auto-updater.unstable", false);
+            ui.settings.game.checkPref("auto-updater.unstable", false, b -> {
+                // needed how update state, because button color in the main menu is based on this state
+                updater.updateAvailable = false;
+            });
 
             ui.menuGroup.fill(c -> c.bottom().right().button("@auto-updater.check", Icon.refresh, () -> {
                 ui.loadfrag.show();

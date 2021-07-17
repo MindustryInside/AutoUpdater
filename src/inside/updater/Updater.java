@@ -24,13 +24,13 @@ import static mindustry.Vars.*;
 import static mindustry.core.Version.*;
 
 public class Updater{
-    private static final int updateInterval = 60; // seconds
+    protected static final int updateInterval = 60; // seconds
 
-    private final AsyncExecutor executor = new AsyncExecutor(1);
-    private boolean checkUpdates = true;
-    private boolean updateAvailable;
-    private String updateUrl;
-    private String updateBuild;
+    protected final AsyncExecutor executor = new AsyncExecutor(1);
+    protected boolean checkUpdates = true;
+    protected boolean updateAvailable;
+    protected String updateUrl;
+    protected String updateBuild;
 
     public boolean active(){
         return !type.equals("bleeding-edge");
@@ -40,8 +40,7 @@ public class Updater{
         if(active()){
             Timer.schedule(() -> {
                 if(checkUpdates && (headless || state.isMenu())){
-                    // needed how update state, because button color in the main menu is based on this state
-                    checkUpdate(t -> updateAvailable = t);
+                    checkUpdate(t -> {});
                 }
             }, updateInterval, updateInterval);
         }
