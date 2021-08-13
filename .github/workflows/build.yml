@@ -1,0 +1,21 @@
+name: Java CI
+
+on: [push, workflow_dispatch]
+
+jobs:
+  buildJar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 16
+      - name: Build mod jar
+        run: ./gradlew dist
+      - name: Upload built jar file
+        uses: actions/upload-artifact@v2
+        with:
+          name: auto-updater-snapshot.jar
+          path: build/libs/*
